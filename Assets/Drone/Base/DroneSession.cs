@@ -77,6 +77,7 @@ public class DroneSession : SingleInstance<DroneSession> {
         droneRegistrationState = DroneRegistrationState.RegisterStarted;
         Debug.Log("Drone registration started");
     }
+
     private void OnDroneRegisterFailed(string error) {
         RegisterError = error;
         IsRegistered = false;
@@ -92,7 +93,7 @@ public class DroneSession : SingleInstance<DroneSession> {
     }
 
     void OnDroneConnected(Drone drone) {
-        Debug.Log($"Drone {drone.Name} connected");
+        Debug.Log("Drone {drone.Name} connected");
     }
 
     void OnDroneDisconnected() {
