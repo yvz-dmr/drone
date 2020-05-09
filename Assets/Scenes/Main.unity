@@ -507,7 +507,17 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3583596045365909042, guid: 8d8aa7c2f4dd2584f9615c9a994d4c00,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4235979864864813849, guid: 8d8aa7c2f4dd2584f9615c9a994d4c00,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4292041556227631425, guid: 8d8aa7c2f4dd2584f9615c9a994d4c00,
         type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -1732,7 +1742,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 488560176}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0a9c647e9c345674cbc4082c62cd7a88, type: 3}
   m_Name: 
