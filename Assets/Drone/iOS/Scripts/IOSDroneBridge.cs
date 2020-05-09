@@ -46,6 +46,14 @@ public class IOSDroneBridgeEventListener : MonoBehaviour
     {
         bridge.OnDroneDisconnected?.Invoke();
     }
+
+    public void OnGimbalDataPresent(string data){
+
+    }
+    public void OnFlightControllerPresent(string data){
+
+    }
+
 }
 
 public class IOSDroneBridge : DroneBridge
