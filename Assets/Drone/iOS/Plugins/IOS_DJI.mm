@@ -25,6 +25,7 @@
     DJIVideoFeedListener, DJICameraDelegate, DJIGimbalDelegate>
 + (id) sharedInstance;
 
+@property(nonatomic, weak) DJIBaseProduct* product;
 @property (nonatomic) NSDictionary *fromFlightDelegate;
 @property (nonatomic) NSDictionary *fromGimbalDelegate;
 @property (nonatomic) NSMutableDictionary *GetDroneData;
@@ -84,6 +85,7 @@ static IOS_DJI * _sharedInstance;
     [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"Product Connected"];
 #if UNITY_BUILD
     if(product){
+        self.product = product;
         [self fetchDroneData];
         [self setupVideoStream];
         [self setupVideoPreviewer];
@@ -215,7 +217,7 @@ static IOS_DJI * _sharedInstance;
                               @"satelliteCount"     : satelliteCount,
                               @"isFlying"           : isFlying,
                               @"GetDroneAttitude"   : droneAttitude,
-                              @"GetModelName"       : product.model,
+                              @"GetModelName"       : self.product.model,
                             //   @"GetHeading"       : droneHeading,
                               @"takeoffLocationAltitude": takeoffLocationAltitude,
                               @"GetHeading"         : droneHeadingStr,
