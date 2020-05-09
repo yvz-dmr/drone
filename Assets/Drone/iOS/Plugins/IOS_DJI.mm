@@ -197,7 +197,7 @@ static IOS_DJI * _sharedInstance;
     [droneAttitude addObject:roll];
     [droneAttitude addObject:yaw];
     //as suggested by client; this can be RC for crash
-    NSString *droneHeading = [NSString stringWithFormat:@"%@",yaw];
+    NSString *droneHeading = [NSString stringWithFormat:@"%f",yaw];
     
     DJIBaseProduct *product = [IOS_DJI_Utility fetchProduct];
     
