@@ -51,7 +51,7 @@ static IOS_DJI * _sharedInstance;
 {
     /// allocate Dictionary for drone data
     self.GetDroneData = [[NSMutableDictionary alloc]init];
-    
+    [[IOS_DJI_NativeUtility sharedInstance] SetLogState:true];
     [DJISDKManager registerAppWithDelegate:self];
 }
 
@@ -355,6 +355,8 @@ static IOS_DJI * _sharedInstance;
     NSString *keyForObject = [IOS_DJI_DataConvertor charToNSString:key];
     NSString* str = [self.GetDroneData objectForKey:keyForObject];
     if(str == nil || [str isKindOfClass:[NSNull class]] || str.length==0) {
+        NSString* errMsg = [NSString stringWithFormat:@"Key is not present yet: %s",key];
+        [[IOS_DJI_NativeUtility sharedInstance] NativeLog: errMsg];
         return @"";
     }
     return str;
