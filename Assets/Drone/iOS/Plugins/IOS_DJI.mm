@@ -2,7 +2,7 @@
 //  iOS_DJI.m
 //
 
-
+// Set 1 for running with ios
 #define UNITY_BUILD 1
 
 #import <Foundation/Foundation.h>
@@ -23,13 +23,12 @@
 #if UNITY_BUILD
 @interface IOS_DJI : NSObject<DJISDKManagerDelegate, DJIFlightControllerDelegate,
     DJIVideoFeedListener, DJICameraDelegate, DJIGimbalDelegate>
-
 + (id) sharedInstance;
 
 @property (nonatomic) NSDictionary *fromFlightDelegate;
 @property (nonatomic) NSDictionary *fromGimbalDelegate;
-
 @property (nonatomic) NSMutableDictionary *GetDroneData;
+@property (nonatomic, assign) NSData *byteTex;
 
 @end
 #endif
@@ -88,7 +87,8 @@ static IOS_DJI * _sharedInstance;
         [self fetchDroneData];
         [self setupVideoStream];
         [self setupVideoPreviewer];
-        UnitySendMessage("IOSDroneBridgeEventListener", "OnDroneConnected", [IOS_DJI_DataConvertor NSStringToChar:@""]);
+        // this can be RC for crash
+        // UnitySendMessage("IOSDroneBridgeEventListener", "OnDroneConnected", [IOS_DJI_DataConvertor NSStringToChar:@""]);
     }
     else {
         UnitySendMessage("IOSDroneBridgeEventListener", "OnDroneDataNotAvailable", [IOS_DJI_DataConvertor NSStringToChar:@"Unable to fetch drone data"]);
@@ -196,7 +196,7 @@ static IOS_DJI * _sharedInstance;
     [droneAttitude addObject:pitch];
     [droneAttitude addObject:roll];
     [droneAttitude addObject:yaw];
-    //as suggested by client
+    //as suggested by client; this can be RC for crash
     NSString *droneHeading = [NSString stringWithFormat:@"%@",yaw];
     
     DJIBaseProduct *product = [IOS_DJI_Utility fetchProduct];
@@ -338,7 +338,8 @@ static IOS_DJI * _sharedInstance;
 #pragma mark - DJIVideoFeedListener
 -(void)videoFeed:(nonnull DJIVideoFeed *)videoFeed didUpdateVideoData:(nonnull NSData *)videoData{
     [[DJIVideoPreviewer instance] push:(uint8_t *)videoData.bytes length:(int)videoData.length];
-    NSString *encodeData = [videoData base64Encoding];
+//    NSString *encodeData = [videoData base64Encoding];
+    self.byteTex = videoData;
     #if UNITY_BUILD
     UnitySendMessage("IOSDrone", "OnVideoStreamSuccessWithData", [IOS_DJI_DataConvertor NSStringToChar:encodeData]);
     #endif
@@ -369,6 +370,10 @@ char* cStringCopy(const char* string)
     return res;
 }
 
+- (NSData *) getDataTexOption1 {
+    return self.byteTex;
+}
+
 extern "C" {
     //--------------------------------------
     //  IOS Native Plugin Section
@@ -389,7 +394,7 @@ extern "C" {
     void _DJI_StopVideoStream() {
         [[IOS_DJI sharedInstance] StopVideoCapture];
     }
-    
+
     float _GetDroneHeading(char* key) {
         return [[[IOS_DJI sharedInstance] getDataFromDictionary: key] floatValue];
     }
@@ -436,6 +441,22 @@ extern "C" {
         NSString *gimbleAttitude = [[[IOS_DJI sharedInstance] getAttitudeFromDictionary: key] stringValue];
         return cStringCopy([gimbleAttitude UTF8String]);
     }
-}
+    
+    uint8_t * getTextureOption1(){
+        return (uint8_t *) [[IOS_DJI sharedInstance] getDataTexOption1].bytes;
+    }
+    
+    // uintptr_t UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API _GetNativeTexturePtr(int width, int height)
+    // {
+    //     MTLTextureDescriptor *descriptor = [[MTLTextureDescriptor alloc] init];
+    //     descriptor.pixelFormat = MTLPixelFormatBGRA8Unorm;
+    //     descriptor.width = width;
+    //     descriptor.height = height;
 
+    //     id<MTLTexture> texture = [s_MetalGraphics->MetalDevice() newTextureWithDescriptor:descriptor];
+    
+    //     return (uintptr_t)texture;
+    // }
+    
+    }
 @end
