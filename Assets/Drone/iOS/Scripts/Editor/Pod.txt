@@ -1,0 +1,16 @@
+platform :ios, '*iosVersion*'
+
+use_frameworks!
+
+target 'Unity-iPhone' do
+pod 'DJI-SDK-iOS', '~> 4.11.2’
+pod 'DJIWidget', '~> 1.6.2'
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['ENABLE_BITCODE'] = 'YES'
+    end
+  end
+end
