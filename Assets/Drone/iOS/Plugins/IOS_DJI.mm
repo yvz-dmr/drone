@@ -201,11 +201,11 @@ static IOS_DJI * _sharedInstance;
     
     DJIBaseProduct *product = [IOS_DJI_Utility fetchProduct];
     
-    // double droneHeading = 0;
-    // if([fc compass] != NULL){
-    //     droneHeading = fc.compass.heading;
-    // }
-    // NSString *droneHeadingStr = [NSString stringWithFormat:@"%f",droneHeading];
+    double droneHeading = 0;
+    if([fc compass] != NULL){
+        droneHeading = fc.compass.heading;
+    }
+    NSString *droneHeadingStr = [NSString stringWithFormat:@"%f",droneHeading];
     
     
     NSDictionary *dataDict = @{@"signalLevel"       : signalLevel,
@@ -216,9 +216,9 @@ static IOS_DJI * _sharedInstance;
                               @"isFlying"           : isFlying,
                               @"GetDroneAttitude"   : droneAttitude,
                               @"GetModelName"       : product.model,
-                              @"GetHeading"       : droneHeading,
+                            //   @"GetHeading"       : droneHeading,
                               @"takeoffLocationAltitude": takeoffLocationAltitude,
-                            //   @"GetHeading"         : droneHeadingStr,
+                              @"GetHeading"         : droneHeadingStr,
                               };
     
     [self.GetDroneData addEntriesFromDictionary:dataDict];
