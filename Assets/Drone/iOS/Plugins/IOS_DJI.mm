@@ -87,8 +87,8 @@ static IOS_DJI * _sharedInstance;
         [self fetchDroneData];
         [self setupVideoStream];
         [self setupVideoPreviewer];
-        // this can be RC for crash
-        // UnitySendMessage("IOSDroneBridgeEventListener", "OnDroneConnected", [IOS_DJI_DataConvertor NSStringToChar:@""]);
+        
+        UnitySendMessage("IOSDroneBridgeEventListener", "OnDroneConnected", [IOS_DJI_DataConvertor NSStringToChar:@""]);
     }
     else {
         UnitySendMessage("IOSDroneBridgeEventListener", "OnDroneDataNotAvailable", [IOS_DJI_DataConvertor NSStringToChar:@"Unable to fetch drone data"]);
@@ -196,7 +196,7 @@ static IOS_DJI * _sharedInstance;
     [droneAttitude addObject:pitch];
     [droneAttitude addObject:roll];
     [droneAttitude addObject:yaw];
-    //as suggested by client; this can be RC for crash
+    
     NSString *droneHeading = [NSString stringWithFormat:@"%f",yaw];
     
     DJIBaseProduct *product = [IOS_DJI_Utility fetchProduct];
