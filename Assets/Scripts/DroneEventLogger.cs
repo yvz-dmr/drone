@@ -9,7 +9,7 @@ public class DroneEventLogger : MonoBehaviour
 
     private void Awake() {
 
-        session.OnDroneConnectedEvent.AddListener((drone) => Logger.Instance.Log(drone.Name + " Connected"));
+        session.OnDroneConnectedEvent.AddListener((drone) => Logger.Instance.Log("{drone.Name} Connected"));
         session.OnDroneDisconnectedEvent.AddListener(() => Logger.Instance.Log("Drone disconnected"));
         session.OnDroneRegistrationStateChangeEvent.AddListener((state) => Logger.Instance.Log("State " + state));
         session.OnRegisteredEvent.AddListener(() => Logger.Instance.Log("Registered"));
