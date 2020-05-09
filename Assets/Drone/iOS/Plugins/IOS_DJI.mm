@@ -167,7 +167,7 @@ static IOS_DJI * _sharedInstance;
         NSDictionary *dataDict = @{ @"GetGimbalAttitude": gimbalAttitude };
         [self.GetDroneData addEntriesFromDictionary:dataDict];
         [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"OnGimbalDataPresent Done"];
-        UnitySendMessage("IOSDroneBridgeEventListener", "OnGimbalDataPresent", [IOS_DJI_DataConvertor NSStringToChar:@"OnGimbalDataPresent"]);
+        // UnitySendMessage("IOSDroneBridgeEventListener", "OnGimbalDataPresent", [IOS_DJI_DataConvertor NSStringToChar:@"OnGimbalDataPresent"]);
     }
 }
 
@@ -227,7 +227,7 @@ static IOS_DJI * _sharedInstance;
     
     [self.GetDroneData addEntriesFromDictionary:dataDict];
     [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"OnFlightControllerPresent Done"];
-    UnitySendMessage("IOSDroneBridgeEventListener", "OnFlightControllerPresent", [IOS_DJI_DataConvertor NSStringToChar:@"model / heading/ flight details can try"]);
+    // UnitySendMessage("IOSDroneBridgeEventListener", "OnFlightControllerPresent", [IOS_DJI_DataConvertor NSStringToChar:@"model / heading/ flight details can try"]);
 }
 /*
 -(void) CheckDeleagteTaskCompleted:(NSDictionary *)fromFlight withDJIGimbal: (NSDictionary *)fromGimbal {
