@@ -363,6 +363,7 @@ static IOS_DJI * _sharedInstance;
         [[IOS_DJI_NativeUtility sharedInstance] NativeLog: errMsg];
         return @"";
     }
+    [[IOS_DJI_NativeUtility sharedInstance] NativeLog: [NSString stringWithFormat:@"Key %s is present with value : %s",key, str]];
     return str;
 }
 
