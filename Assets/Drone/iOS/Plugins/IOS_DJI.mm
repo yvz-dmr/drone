@@ -353,7 +353,11 @@ static IOS_DJI * _sharedInstance;
 #pragma mark- get Data
 -(id) getDataFromDictionary: (char *)key {
     NSString *keyForObject = [IOS_DJI_DataConvertor charToNSString:key];
-    return [self.GetDroneData objectForKey:keyForObject];
+    NSString* str = [self.GetDroneData objectForKey:keyForObject];
+    if(str == nil || [str isKindOfClass:[NSNull class]] || str.length==0) {
+        return @"";
+    }
+    return str;
 }
 
 -(id) getAttitudeFromDictionary: (char *)key {
