@@ -197,11 +197,11 @@ static IOS_DJI * _sharedInstance;
     [droneAttitude addObject:roll];
     [droneAttitude addObject:yaw];
     
-    NSString *droneHeading = [NSString stringWithFormat:@"%f",yaw];
+//    NSString *droneHeading = [NSString stringWithFormat:@"%f",yaw];
     
     DJIBaseProduct *product = [IOS_DJI_Utility fetchProduct];
     
-    double droneHeading = 0;
+    double droneHeading = 0.0;
     if([fc compass] != NULL){
         droneHeading = fc.compass.heading;
     }
