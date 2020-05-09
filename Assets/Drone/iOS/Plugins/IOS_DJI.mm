@@ -338,7 +338,7 @@ static IOS_DJI * _sharedInstance;
 #pragma mark - DJIVideoFeedListener
 -(void)videoFeed:(nonnull DJIVideoFeed *)videoFeed didUpdateVideoData:(nonnull NSData *)videoData{
     [[DJIVideoPreviewer instance] push:(uint8_t *)videoData.bytes length:(int)videoData.length];
-//    NSString *encodeData = [videoData base64Encoding];
+   NSString *encodeData = [videoData base64Encoding];
     self.byteTex = videoData;
     #if UNITY_BUILD
     UnitySendMessage("IOSDrone", "OnVideoStreamSuccessWithData", [IOS_DJI_DataConvertor NSStringToChar:encodeData]);
