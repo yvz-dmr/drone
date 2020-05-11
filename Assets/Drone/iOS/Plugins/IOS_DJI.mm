@@ -30,6 +30,7 @@
 @property (nonatomic) NSDictionary *fromGimbalDelegate;
 @property (nonatomic) NSMutableDictionary *GetDroneData;
 @property (nonatomic, assign) NSData *byteTex;
+@property (copy) void (^GetModelNameCallback)(char*);
 
 @end
 #endif
@@ -86,6 +87,10 @@ static IOS_DJI * _sharedInstance;
 #if UNITY_BUILD
     if(product){
         self.product = product;
+        // Calback with model name
+        self.GetModelNameCallback((char *)[IOS_DJI_DataConvertor NSStringToChar:[NSString stringWithFormat:@"%@", product.model]]);
+        
+        // fetch drone data
         [self fetchDroneData];
         [self setupVideoStream];
         [self setupVideoPreviewer];
@@ -96,8 +101,18 @@ static IOS_DJI * _sharedInstance;
         UnitySendMessage("IOSDroneBridgeEventListener", "OnDroneDataNotAvailable", [IOS_DJI_DataConvertor NSStringToChar:@"Unable to fetch drone data"]);
     }
 #else
-    [self.delegate appDroneConnected:product];
+    
     if(product){
+        /// callback to Example section
+        [self.delegate appDroneConnected:product];
+        
+        /// Collect product Instance
+        self.product = product;
+        
+        /// Calback with model name
+        self.GetModelNameCallback((char *)[IOS_DJI_DataConvertor NSStringToChar:[NSString stringWithFormat:@"%@", product.model]]);
+        
+        /// fetch drone data
         [self fetchDroneData];
         [self setupVideoStream];
         [self setupVideoPreviewer];
@@ -135,13 +150,13 @@ static IOS_DJI * _sharedInstance;
 
 -(void) fetchDroneData {
     
-    //    DJIFlightController* flightController = [IOS_DJI_Utility fetchFlightController];
-    //    if (flightController == nil) return;
-    //
-    //    flightController.delegate = self;
     
-    DJIAircraft* aircraft = [IOS_DJI_Utility fetchAircraft];
-    if (aircraft == nil) return;
+    //// If above one is not working try this one
+        DJIAircraft* aircraft = (DJIAircraft *)self.product;
+        if (aircraft == nil) {
+            [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"Aircraft Instance null"];
+            return;
+        }
     
     aircraft.flightController.delegate = self;
     aircraft.gimbal.delegate = self;
@@ -167,7 +182,9 @@ static IOS_DJI * _sharedInstance;
         NSDictionary *dataDict = @{ @"GetGimbalAttitude": gimbalAttitude };
         [self.GetDroneData addEntriesFromDictionary:dataDict];
         [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"OnGimbalDataPresent Done"];
-        // UnitySendMessage("IOSDroneBridgeEventListener", "OnGimbalDataPresent", [IOS_DJI_DataConvertor NSStringToChar:@"OnGimbalDataPresent"]);
+    #if UNITY_BUILD
+        UnitySendMessage("IOSDroneBridgeEventListener", "OnGimbalDataPresent", [IOS_DJI_DataConvertor NSStringToChar:@"OnGimbalDataPresent"]);
+    #endif
     }
 }
 
@@ -227,7 +244,9 @@ static IOS_DJI * _sharedInstance;
     
     [self.GetDroneData addEntriesFromDictionary:dataDict];
     [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"OnFlightControllerPresent Done"];
-    // UnitySendMessage("IOSDroneBridgeEventListener", "OnFlightControllerPresent", [IOS_DJI_DataConvertor NSStringToChar:@"model / heading/ flight details can try"]);
+#if UNITY_BUILD
+    UnitySendMessage("IOSDroneBridgeEventListener", "OnFlightControllerPresent", [IOS_DJI_DataConvertor NSStringToChar:@"model / heading/ flight details can try"]);
+#endif
 }
 /*
 -(void) CheckDeleagteTaskCompleted:(NSDictionary *)fromFlight withDJIGimbal: (NSDictionary *)fromGimbal {
@@ -412,10 +431,10 @@ extern "C" {
         return [[[IOS_DJI sharedInstance] getDataFromDictionary: key] floatValue];
     }
     
-    char* _GetModelName(char* key) {
-        NSString *modelName = [[[IOS_DJI sharedInstance] getDataFromDictionary: key] stringValue];
-        return cStringCopy([modelName UTF8String]);
-    }
+    // char* _GetModelName(char* key) {
+    //     NSString *modelName = [[[IOS_DJI sharedInstance] getDataFromDictionary: key] stringValue];
+    //     return cStringCopy([modelName UTF8String]);
+    // }
     
     bool _IsFlying(char *key) {
         return [[[IOS_DJI sharedInstance] getDataFromDictionary: key] boolValue];
@@ -446,18 +465,29 @@ extern "C" {
     }
 
     char* _GetDroneAttitude(char* key) {
-        NSString *droneAttitude = [[[IOS_DJI sharedInstance] getAttitudeFromDictionary: key] stringValue];
+        NSString *droneAttitude = (NSString *)[[IOS_DJI sharedInstance] getAttitudeFromDictionary: key];
         return cStringCopy([droneAttitude UTF8String]);
     }
     
     char* _GetGimbalAttitude(char* key) {
-        NSString *gimbleAttitude = [[[IOS_DJI sharedInstance] getAttitudeFromDictionary: key] stringValue];
+        NSString *gimbleAttitude = (NSString *)[[IOS_DJI sharedInstance] getAttitudeFromDictionary: key];
         return cStringCopy([gimbleAttitude UTF8String]);
     }
     
     uint8_t * getTextureOption1(){
         return (uint8_t *) [[IOS_DJI sharedInstance] getDataTexOption1].bytes;
     }
+    
+    ////Another Method Get Model name
+    void _GetModelName(void(*callback)(char*)) {
+        IOS_DJI *sharedInstance = [IOS_DJI sharedInstance];
+        sharedInstance.GetModelNameCallback = ^(char* model){
+            if(callback) {
+                callback(model);
+            }
+        };
+    }
+
     
     // uintptr_t UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API _GetNativeTexturePtr(int width, int height)
     // {
