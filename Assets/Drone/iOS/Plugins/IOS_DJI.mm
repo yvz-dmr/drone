@@ -431,10 +431,10 @@ extern "C" {
         return [[[IOS_DJI sharedInstance] getDataFromDictionary: key] floatValue];
     }
     
-    // char* _GetModelName(char* key) {
-    //     NSString *modelName = [[[IOS_DJI sharedInstance] getDataFromDictionary: key] stringValue];
-    //     return cStringCopy([modelName UTF8String]);
-    // }
+    char* _GetModelName(char* key) {
+        NSString *modelName = [[IOS_DJI sharedInstance] getDataFromDictionary: key];
+        return cStringCopy([modelName UTF8String]);
+    }
     
     bool _IsFlying(char *key) {
         return [[[IOS_DJI sharedInstance] getDataFromDictionary: key] boolValue];
@@ -479,7 +479,7 @@ extern "C" {
     }
     
     ////Another Method Get Model name
-    void _GetModelName(void(*callback)(char*)) {
+    void _DJI_ModelName(void(*callback)(char*)) {
         IOS_DJI *sharedInstance = [IOS_DJI sharedInstance];
         sharedInstance.GetModelNameCallback = ^(char* model){
             if(callback) {
