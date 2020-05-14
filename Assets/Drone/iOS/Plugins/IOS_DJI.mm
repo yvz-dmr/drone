@@ -25,7 +25,6 @@
     DJIVideoFeedListener, DJICameraDelegate, DJIGimbalDelegate>
 + (id) sharedInstance;
 
-@property(nonatomic, strong) DJIBaseProduct* product;
 @property(nonatomic, strong) NSString* modelName1;
 @property(nonatomic, weak) DJIBaseProduct* product;
 @property (nonatomic) NSDictionary *fromFlightDelegate;
@@ -90,7 +89,7 @@ static IOS_DJI * _sharedInstance;
     if(product){
         self.product = product;
         self.modelName1 = self.product.model;
-        [[IOS_DJI_NativeUtility sharedInstance] NativeLog:"Model name is this :"];
+        [[IOS_DJI_NativeUtility sharedInstance] NativeLog:@"Model name is this :"];
         [[IOS_DJI_NativeUtility sharedInstance] NativeLog:self.modelName1];
         // Calback with model name
         // self.GetModelNameCallback((char *)[IOS_DJI_DataConvertor NSStringToChar:[NSString stringWithFormat:@"%@", product.model]]);
@@ -241,7 +240,7 @@ static IOS_DJI * _sharedInstance;
                               @"satelliteCount"     : satelliteCount,
                               @"isFlying"           : isFlying,
                               @"GetDroneAttitude"   : droneAttitude,
-                              @"GetModelName"       : "test model name",
+                              @"GetModelName"       : @"test model name",
                             //   @"GetHeading"       : droneHeading,
                               @"takeoffLocationAltitude": takeoffLocationAltitude,
                               @"GetHeading"         : droneHeadingStr,
