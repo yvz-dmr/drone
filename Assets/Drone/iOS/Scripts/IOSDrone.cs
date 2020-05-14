@@ -39,6 +39,30 @@ public class IOSDrone : Drone
     protected bool _IsVideoStreamData = false;
     private  string CameraFrameData { get; set; }
 
+    // #region GetModelName
+    // /// <summary>
+    // /// Here is another method for getting DJI Model Name
+    // /// This method is based on Observer Pattern. When some thing changed in native end, 
+    // /// It will reflect in Unity end.
+    // /// </summary>
+    // /// Delegate Method
+    // public string _GetModelNameFromNative;
+
+    // public delegate void DroneModelCallbackFunc(string modelName);
+
+    // [DllImport("__Internal")]
+    // private static extern void _DJI_ModelName(DroneModelCallbackFunc callbackFunc);
+
+    // [AOT.MonoPInvokeCallback(typeof(DroneModelCallbackFunc))]
+    // private static void DroneModelNameDidChange(string modelName)
+    // {
+    //     /// Recieve callback data when change happen in native end.
+    //     IOSScreenWriter.Write("ModelName:- "+modelName);
+    //     _GetModelNameFromNative = modelName;
+    // }
+    // #endregion
+
+
     public IOSDrone()
     {
     }
@@ -49,6 +73,11 @@ public class IOSDrone : Drone
     {
         return _GetModelName("GetModelName");
     }
+
+    // protected override string GetModelName2()
+    // {
+    //     return _GetModelNameFromNative;
+    // }
 
     // why changed ? Need to think how to do this ; still not found solution 
     // to return texture from iOS, this link gives some hint but cant try as i dont have drone : https://github.com/edom18/NativePluginCopyTexture

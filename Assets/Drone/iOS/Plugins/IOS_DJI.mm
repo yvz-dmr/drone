@@ -25,6 +25,8 @@
     DJIVideoFeedListener, DJICameraDelegate, DJIGimbalDelegate>
 + (id) sharedInstance;
 
+@property(nonatomic, strong) DJIBaseProduct* product;
+@property(nonatomic, strong) NSString* modelName1;
 @property(nonatomic, weak) DJIBaseProduct* product;
 @property (nonatomic) NSDictionary *fromFlightDelegate;
 @property (nonatomic) NSDictionary *fromGimbalDelegate;
@@ -87,8 +89,11 @@ static IOS_DJI * _sharedInstance;
 #if UNITY_BUILD
     if(product){
         self.product = product;
+        self.modelName1 = self.product.model;
+        [[IOS_DJI_NativeUtility sharedInstance] NativeLog:"Model name is this :"];
+        [[IOS_DJI_NativeUtility sharedInstance] NativeLog:self.modelName1];
         // Calback with model name
-        self.GetModelNameCallback((char *)[IOS_DJI_DataConvertor NSStringToChar:[NSString stringWithFormat:@"%@", product.model]]);
+        // self.GetModelNameCallback((char *)[IOS_DJI_DataConvertor NSStringToChar:[NSString stringWithFormat:@"%@", product.model]]);
         
         // fetch drone data
         [self fetchDroneData];
@@ -104,13 +109,13 @@ static IOS_DJI * _sharedInstance;
     
     if(product){
         /// callback to Example section
-        [self.delegate appDroneConnected:product];
+        // [self.delegate appDroneConnected:product];
         
-        /// Collect product Instance
-        self.product = product;
+        // /// Collect product Instance
+        // self.product = product;
         
-        /// Calback with model name
-        self.GetModelNameCallback((char *)[IOS_DJI_DataConvertor NSStringToChar:[NSString stringWithFormat:@"%@", product.model]]);
+        // /// Calback with model name
+        // self.GetModelNameCallback((char *)[IOS_DJI_DataConvertor NSStringToChar:[NSString stringWithFormat:@"%@", product.model]]);
         
         /// fetch drone data
         [self fetchDroneData];
@@ -236,7 +241,7 @@ static IOS_DJI * _sharedInstance;
                               @"satelliteCount"     : satelliteCount,
                               @"isFlying"           : isFlying,
                               @"GetDroneAttitude"   : droneAttitude,
-                              @"GetModelName"       : self.product.model,
+                              @"GetModelName"       : "test model name",
                             //   @"GetHeading"       : droneHeading,
                               @"takeoffLocationAltitude": takeoffLocationAltitude,
                               @"GetHeading"         : droneHeadingStr,
@@ -432,7 +437,7 @@ extern "C" {
     }
     
     char* _GetModelName(char* key) {
-        NSString *modelName = [[IOS_DJI sharedInstance] getDataFromDictionary: key];
+        NSString *modelName = (NSString *)[[IOS_DJI sharedInstance] getDataFromDictionary: key];
         return cStringCopy([modelName UTF8String]);
     }
     
