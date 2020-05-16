@@ -206,7 +206,7 @@ static IOS_DJI * _sharedInstance;
     NSString *satelliteCount    = [NSString stringWithFormat:@"%lu", (unsigned long)state.satelliteCount];
     
     NSString *isFlying          = [NSString stringWithFormat:@"%d",state.isFlying];
-    NSString *takeoffLocationAltitude = [NSString stringWithFormat:@"%f",state.takeoffLocationAltitude];
+    NSString *takeofLocationAltitude = [NSString stringWithFormat:@"%f",state.takeoffLocationAltitude];
     
     /// Drone attitude
     double radianPitch = RADIAN(state.attitude.pitch);
@@ -240,9 +240,8 @@ static IOS_DJI * _sharedInstance;
                               @"satelliteCount"     : satelliteCount,
                               @"isFlying"           : isFlying,
                               @"GetDroneAttitude"   : droneAttitude,
-                              @"GetModelName"       : @"test model name",
                             //   @"GetHeading"       : droneHeading,
-                              @"takeoffLocationAltitude": takeoffLocationAltitude,
+                              @"takeofLocationAltitude": takeofLocationAltitude,
                               @"GetHeading"         : droneHeadingStr,
                               };
     
@@ -395,6 +394,10 @@ static IOS_DJI * _sharedInstance;
     return [IOS_DJI_DataConvertor serializeNSStringsArray:[self.GetDroneData objectForKey:keyForObject]];
 }
 
+-(char *) getModelNameOrig {
+    return [IOS_DJI_DataConvertor NSStringToChar(self.modelName1)];
+}
+
 char* cStringCopy(const char* string)
 {
     if (string == NULL)
@@ -435,9 +438,10 @@ extern "C" {
         return [[[IOS_DJI sharedInstance] getDataFromDictionary: key] floatValue];
     }
     
-    char* _GetModelName(char* key) {
-        NSString *modelName = (NSString *)[[IOS_DJI sharedInstance] getDataFromDictionary: key];
-        return cStringCopy([modelName UTF8String]);
+    char* _GetModelName(char* key) {        
+        return [[IOS_DJI sharedInstance] getModelNameOrig];
+//        NSString *modelName = (NSString *)[[IOS_DJI sharedInstance] getDataFromDictionary: key];
+//        return cStringCopy([modelName UTF8String]);
     }
     
     bool _IsFlying(char *key) {
