@@ -222,8 +222,6 @@ static IOS_DJI * _sharedInstance;
     [droneAttitude addObject:roll];
     [droneAttitude addObject:yaw];
     
-//    NSString *droneHeading = [NSString stringWithFormat:@"%f",yaw];
-    
     DJIBaseProduct *product = [IOS_DJI_Utility fetchProduct];
     
     double droneHeading = 0.0;
@@ -240,7 +238,6 @@ static IOS_DJI * _sharedInstance;
                               @"satelliteCount"     : satelliteCount,
                               @"isFlying"           : isFlying,
                               @"GetDroneAttitude"   : droneAttitude,
-                            //   @"GetHeading"       : droneHeading,
                               @"takeofLocationAltitude": takeofLocationAltitude,
                               @"GetHeading"         : droneHeadingStr,
                               };
@@ -395,7 +392,11 @@ static IOS_DJI * _sharedInstance;
 }
 
 -(char *) getModelNameOrig {
-    return [IOS_DJI_DataConvertor NSStringToChar(self.modelName1)];
+    return cStringCopy([IOS_DJI_DataConvertor NSStringToChar:[NSString stringWithFormat:@"%@", self.modelName1]]);
+}
+
+-(char *) convertNSStringToChar:(NSString *)value {
+    return cStringCopy([IOS_DJI_DataConvertor NSStringToChar:value]);
 }
 
 char* cStringCopy(const char* string)
