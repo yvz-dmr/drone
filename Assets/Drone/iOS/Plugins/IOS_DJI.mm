@@ -365,6 +365,10 @@ static IOS_DJI * _sharedInstance;
     [[DJIVideoPreviewer instance] push:(uint8_t *)videoData.bytes length:(int)videoData.length];
    NSString *encodeData = [videoData base64Encoding];
     self.byteTex = videoData;
+    [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"tracking video data"];
+    [[IOS_DJI_NativeUtility sharedInstance] NativeLog: [NSString stringWithFormat:@"byte in form of string : %@",encodeData]];
+    [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"tracking video data"];
+    [[IOS_DJI_NativeUtility sharedInstance] NativeLog: [NSString stringWithFormat:@"byte in form of string : %@",self.byteTex]];
     #if UNITY_BUILD
     UnitySendMessage("IOSDrone", "OnVideoStreamSuccessWithData", [IOS_DJI_DataConvertor NSStringToChar:encodeData]);
     #endif
@@ -444,6 +448,16 @@ extern "C" {
 //        NSString *modelName = (NSString *)[[IOS_DJI sharedInstance] getDataFromDictionary: key];
 //        return cStringCopy([modelName UTF8String]);
     }
+
+    char* _GetDroneAttitude(char* key) {
+        NSString *droneAttitude = (NSString *)[[IOS_DJI sharedInstance] getAttitudeFromDictionary: key];
+        return cStringCopy([droneAttitude UTF8String]);
+    }
+    
+    char* _GetGimbalAttitude(char* key) {
+        NSString *gimbleAttitude = (NSString *)[[IOS_DJI sharedInstance] getAttitudeFromDictionary: key];
+        return cStringCopy([gimbleAttitude UTF8String]);
+    }
     
     bool _IsFlying(char *key) {
         return [[[IOS_DJI sharedInstance] getDataFromDictionary: key] boolValue];
@@ -472,18 +486,8 @@ extern "C" {
     double _GetLongitude(char* key) {
         return [[[IOS_DJI sharedInstance] getDataFromDictionary: key] doubleValue];
     }
-
-    char* _GetDroneAttitude(char* key) {
-        NSString *droneAttitude = (NSString *)[[IOS_DJI sharedInstance] getAttitudeFromDictionary: key];
-        return cStringCopy([droneAttitude UTF8String]);
-    }
     
-    char* _GetGimbalAttitude(char* key) {
-        NSString *gimbleAttitude = (NSString *)[[IOS_DJI sharedInstance] getAttitudeFromDictionary: key];
-        return cStringCopy([gimbleAttitude UTF8String]);
-    }
-    
-    uint8_t * getTextureOption1(){
+    uint8_t * _getTextureOption1(){
         return (uint8_t *) [[IOS_DJI sharedInstance] getDataTexOption1].bytes;
     }
     

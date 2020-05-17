@@ -35,6 +35,9 @@ public class IOSDrone : Drone
     [DllImport("__Internal")]
     private static extern string    _GetGimbalAttitude(string key);
 
+    [DllImport("__Internal")]
+    private static extern byte[] _getTextureOption1();
+
     protected bool _IsFailedToParse = false;
     protected bool _IsVideoStreamData = false;
     private  string CameraFrameData { get; set; }
@@ -103,11 +106,12 @@ public class IOSDrone : Drone
 
         if (IsStreaming && !_IsFailedToParse && _IsVideoStreamData)
         {
+            byte[] videoByte = _getTextureOption1();
             byte[] decodedFromBase64 = System.Convert.FromBase64String(CameraFrameData);
 
-            if (decodedFromBase64 != null && decodedFromBase64.Length > 0)
+            if (videoByte != null && videoByte.Length > 0)
             {
-                videoStreamTexture.LoadRawTextureData(decodedFromBase64);
+                videoStreamTexture.LoadRawTextureData(videoByte);
                 videoStreamTexture.Apply(false);
             }
         }
