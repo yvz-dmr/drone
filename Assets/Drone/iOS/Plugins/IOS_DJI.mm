@@ -102,7 +102,7 @@ static IOS_DJI * _sharedInstance;
         // fetch drone data
         [self fetchDroneData];
         [self setupVideoStream];
-//        [self setupVideoPreviewer];
+        //        [self setupVideoPreviewer];
         
         UnitySendMessage("IOSDroneBridgeEventListener", "OnDroneConnected", [IOS_DJI_DataConvertor NSStringToChar:@""]);
     }
@@ -161,11 +161,11 @@ static IOS_DJI * _sharedInstance;
     
     
     //// If above one is not working try this one
-        DJIAircraft* aircraft = (DJIAircraft *)self.product;
-        if (aircraft == nil) {
-            [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"Aircraft Instance null"];
-            return;
-        }
+    DJIAircraft* aircraft = (DJIAircraft *)self.product;
+    if (aircraft == nil) {
+        [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"Aircraft Instance null"];
+        return;
+    }
     
     aircraft.flightController.delegate = self;
     aircraft.gimbal.delegate = self;
@@ -187,13 +187,13 @@ static IOS_DJI * _sharedInstance;
         [gimbalAttitude addObject:pitch];
         [gimbalAttitude addObject:roll];
         [gimbalAttitude addObject:yaw];
-    
+        
         NSDictionary *dataDict = @{ @"GetGimbalAttitude": gimbalAttitude };
         [self.GetDroneData addEntriesFromDictionary:dataDict];
         [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"OnGimbalDataPresent Done"];
-    #if UNITY_BUILD
+#if UNITY_BUILD
         UnitySendMessage("IOSDroneBridgeEventListener", "OnGimbalDataPresent", [IOS_DJI_DataConvertor NSStringToChar:@"OnGimbalDataPresent"]);
-    #endif
+#endif
     }
 }
 
@@ -237,15 +237,15 @@ static IOS_DJI * _sharedInstance;
     
     
     NSDictionary *dataDict = @{@"signalLevel"       : signalLevel,
-                              @"latitude"           : latitude,
-                              @"longitude"          : longitude,
-                              @"altitudeFromGround" : altitude,
-                              @"satelliteCount"     : satelliteCount,
-                              @"isFlying"           : isFlying,
-                              @"GetDroneAttitude"   : droneAttitude,
-                              @"takeofLocationAltitude": takeofLocationAltitude,
-                              @"GetHeading"         : droneHeadingStr,
-                              };
+                               @"latitude"           : latitude,
+                               @"longitude"          : longitude,
+                               @"altitudeFromGround" : altitude,
+                               @"satelliteCount"     : satelliteCount,
+                               @"isFlying"           : isFlying,
+                               @"GetDroneAttitude"   : droneAttitude,
+                               @"takeofLocationAltitude": takeofLocationAltitude,
+                               @"GetHeading"         : droneHeadingStr,
+                               };
     
     [self.GetDroneData addEntriesFromDictionary:dataDict];
     [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"OnFlightControllerPresent Done"];
@@ -265,14 +265,14 @@ static IOS_DJI * _sharedInstance;
     [camera setMode:DJICameraModeRecordVideo withCompletion:^(NSError * _Nullable error) {
         if (error) {
             [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"Set DJICameraModeRecordVideo Failed"];
-            #if UNITY_BUILD
+#if UNITY_BUILD
             const char * err = [IOS_DJI_DataConvertor NSStringToChar:[NSString stringWithFormat:@"%@", [error description]]];
             UnitySendMessage("IOSDrone", "OnVideoStreamFailed", err);
-            #endif
+#endif
         }
     }];
 }
-    
+
 -(void) removeVideoStream {
     DJICamera *camera = [IOS_DJI_Utility fetchCamera];
     if (camera && camera.delegate == self) {
@@ -296,18 +296,18 @@ static IOS_DJI * _sharedInstance;
 
 -(void) attachViewToVideoPreviewer:(UIViewController*) targetViewController {
     // general view
-//    self.videoPreviewView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+    //    self.videoPreviewView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
     targetViewController.view.backgroundColor = [UIColor redColor];
     //    [self.view addSubview:self.videoPreviewView];
     //    [self.view sendSubviewToBack:self.videoPreviewView];
-//    [self.targetViewController.view addSubview:self.videoPreviewView];
-//    [self.targetViewController.view sendSubviewToBack:self.videoPreviewView];
+    //    [self.targetViewController.view addSubview:self.videoPreviewView];
+    //    [self.targetViewController.view sendSubviewToBack:self.videoPreviewView];
     
     // init dji preview
     [DJIVideoPreviewer instance].type = DJIVideoPreviewerTypeAutoAdapt;
     [[DJIVideoPreviewer instance] start];
     [[DJIVideoPreviewer instance] reset];
-//    [[DJIVideoPreviewer instance] setView:self.videoPreviewView];
+    //    [[DJIVideoPreviewer instance] setView:self.videoPreviewView];
     [[DJIVideoPreviewer instance] setView:targetViewController.view];
     // set enable decode
     [[DJIVideoPreviewer instance] setEnableHardwareDecode:YES];
@@ -325,17 +325,17 @@ static IOS_DJI * _sharedInstance;
         [[DJISDKManager videoFeeder].primaryVideoFeed removeListener:self];
     }
 }
-    
+
 -(void) StartVideoCapture {
     DJICamera *camera = [IOS_DJI_Utility fetchCamera];
     if (camera) {
         [camera startRecordVideoWithCompletion:^(NSError * _Nullable error) {
             if (error) {
                 [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"Start Record Video Error"];
-                #if UNITY_BUILD
+#if UNITY_BUILD
                 const char * err = [IOS_DJI_DataConvertor NSStringToChar:[NSString stringWithFormat:@"%@", [error description]]];
                 UnitySendMessage("IOSDrone", "OnVideoStreamFailed", err);
-                #endif
+#endif
             }
         }];
     }
@@ -347,10 +347,10 @@ static IOS_DJI * _sharedInstance;
         [camera stopRecordVideoWithCompletion:^(NSError * _Nullable error) {
             if (error) {
                 [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"Stop Record Video Error"];
-                #if UNITY_BUILD
+#if UNITY_BUILD
                 const char * err = [IOS_DJI_DataConvertor NSStringToChar:[NSString stringWithFormat:@"%@", [error description]]];
                 UnitySendMessage("IOSDrone", "OnVideoStreamFailed", err);
-                #endif
+#endif
             }
         }];
         [self removeContainedController:self.presentedController];
@@ -360,17 +360,17 @@ static IOS_DJI * _sharedInstance;
 #pragma mark - DJIVideoFeedListener
 -(void)videoFeed:(nonnull DJIVideoFeed *)videoFeed didUpdateVideoData:(nonnull NSData *)videoData{
     [[DJIVideoPreviewer instance] push:(uint8_t *)videoData.bytes length:(int)videoData.length];
-   NSString *encodeData = [videoData base64Encoding];
+    NSString *encodeData = [videoData base64Encoding];
     self.byteTex = videoData;
     [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"tracking video data"];
     [[IOS_DJI_NativeUtility sharedInstance] NativeLog: [NSString stringWithFormat:@"byte in form of string : %@",encodeData]];
     [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"tracking video data"];
     [[IOS_DJI_NativeUtility sharedInstance] NativeLog: [NSString stringWithFormat:@"byte in form of string : %@",self.byteTex]];
-    #if UNITY_BUILD
+#if UNITY_BUILD
     UnitySendMessage("IOSDrone", "OnVideoStreamSuccessWithData", [IOS_DJI_DataConvertor NSStringToChar:encodeData]);
-    #endif
+#endif
 }
-    
+
 #pragma mark - DJICameraDelegate
 -(void) camera:(DJICamera*)camera didUpdateSystemState:(DJICameraSystemState*)systemState {}
 
@@ -404,10 +404,10 @@ char* cStringCopy(const char* string)
 {
     if (string == NULL)
         return NULL;
-
+    
     char* res = (char*)malloc(strlen(string) + 1);
     strcpy(res, string);
-
+    
     return res;
 }
 
@@ -429,7 +429,7 @@ char* cStringCopy(const char* string)
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
         
         // instantiate the view controller from the storyboard
-        DemoViewController *demo = [storyboard instantiateViewControllerWithIdentifier:@"DemoVC"];
+        UIViewController *demo = [storyboard instantiateViewControllerWithIdentifier:@"DemoVC"];
         
         if (loadAsContained)
         {
@@ -573,17 +573,17 @@ extern "C" {
     void _DJI_StopVideoStream() {
         [[IOS_DJI sharedInstance] StopVideoCapture];
     }
-
+    
     float _GetDroneHeading(char* key) {
         return [[[IOS_DJI sharedInstance] getDataFromDictionary: key] floatValue];
     }
     
-    char* _GetModelName(char* key) {        
+    char* _GetModelName(char* key) {
         return [[IOS_DJI sharedInstance] getModelNameOrig];
-//        NSString *modelName = (NSString *)[[IOS_DJI sharedInstance] getDataFromDictionary: key];
-//        return cStringCopy([modelName UTF8String]);
+        //        NSString *modelName = (NSString *)[[IOS_DJI sharedInstance] getDataFromDictionary: key];
+        //        return cStringCopy([modelName UTF8String]);
     }
-
+    
     char* _GetDroneAttitude(char* key) {
         NSString *droneAttitude = (NSString *)[[IOS_DJI sharedInstance] getAttitudeFromDictionary: key];
         return cStringCopy([droneAttitude UTF8String]);
@@ -605,7 +605,7 @@ extern "C" {
     float _GetTakeofLocationAltitude(char* key) {
         return [[[IOS_DJI sharedInstance] getDataFromDictionary: key] floatValue];
     }
-
+    
     int _GetSignalLevel(char* key) {
         return [[[IOS_DJI sharedInstance] getDataFromDictionary: key] intValue];
     }
@@ -635,7 +635,7 @@ extern "C" {
             }
         };
     }
-
+    
     
     // uintptr_t UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API _GetNativeTexturePtr(int width, int height)
     // {
@@ -643,11 +643,11 @@ extern "C" {
     //     descriptor.pixelFormat = MTLPixelFormatBGRA8Unorm;
     //     descriptor.width = width;
     //     descriptor.height = height;
-
+    
     //     id<MTLTexture> texture = [s_MetalGraphics->MetalDevice() newTextureWithDescriptor:descriptor];
     
     //     return (uintptr_t)texture;
     // }
     
-    }
+}
 @end
