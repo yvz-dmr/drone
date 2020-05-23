@@ -36,6 +36,7 @@ DJIVideoFeedListener, DJICameraDelegate, DJIGimbalDelegate>
 // video related
 @property(nonatomic) UIView* videoPreviewView;
 @property (nonatomic, strong) UIViewController *presentedController;
+@property (nonatomic, strong) UIViewController *DemoViewController;
 
 @end
 #endif
@@ -295,7 +296,7 @@ static IOS_DJI * _sharedInstance;
 
 -(void) attachViewToVideoPreviewer:(UIViewController*) targetViewController {
     // general view
-?    self.videoPreviewView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+//    self.videoPreviewView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
     targetViewController.view.backgroundColor = [UIColor redColor];
     //    [self.view addSubview:self.videoPreviewView];
     //    [self.view sendSubviewToBack:self.videoPreviewView];
