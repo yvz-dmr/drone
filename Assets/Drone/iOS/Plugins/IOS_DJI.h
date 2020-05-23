@@ -23,7 +23,17 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addDelegate:(id<DroneDelegate>)delegate;
 @property (nonatomic) NSDictionary *fromFlightDelegate;
 @property (nonatomic) NSDictionary *fromGimbalDelegate;
+@property (nonatomic, assign) NSData *byteTex;
+@property(nonatomic, weak) DJIBaseProduct* product;
+@property(nonatomic, strong) NSString* modelName1;
 @property (nonatomic) NSMutableDictionary *GetDroneData;
+@property (copy) void (^GetModelNameCallback)(char*);
+
+//video related
+@property(nonatomic) UIView* videoPreviewView;
+@property (nonatomic, strong) UIViewController *presentedController;
+
+
 @end
 
 NS_ASSUME_NONNULL_END

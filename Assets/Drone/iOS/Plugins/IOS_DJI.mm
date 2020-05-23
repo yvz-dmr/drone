@@ -22,7 +22,7 @@
 
 #if UNITY_BUILD
 @interface IOS_DJI : NSObject<DJISDKManagerDelegate, DJIFlightControllerDelegate,
-    DJIVideoFeedListener, DJICameraDelegate, DJIGimbalDelegate>
+DJIVideoFeedListener, DJICameraDelegate, DJIGimbalDelegate>
 + (id) sharedInstance;
 
 @property(nonatomic, strong) NSString* modelName1;
@@ -32,6 +32,10 @@
 @property (nonatomic) NSMutableDictionary *GetDroneData;
 @property (nonatomic, assign) NSData *byteTex;
 @property (copy) void (^GetModelNameCallback)(char*);
+
+// video related
+@property(nonatomic) UIView* videoPreviewView;
+@property (nonatomic, strong) UIViewController *presentedController;
 
 @end
 #endif
@@ -97,7 +101,7 @@ static IOS_DJI * _sharedInstance;
         // fetch drone data
         [self fetchDroneData];
         [self setupVideoStream];
-        [self setupVideoPreviewer];
+//        [self setupVideoPreviewer];
         
         UnitySendMessage("IOSDroneBridgeEventListener", "OnDroneConnected", [IOS_DJI_DataConvertor NSStringToChar:@""]);
     }
@@ -182,7 +186,7 @@ static IOS_DJI * _sharedInstance;
         [gimbalAttitude addObject:pitch];
         [gimbalAttitude addObject:roll];
         [gimbalAttitude addObject:yaw];
-       
+    
         NSDictionary *dataDict = @{ @"GetGimbalAttitude": gimbalAttitude };
         [self.GetDroneData addEntriesFromDictionary:dataDict];
         [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"OnGimbalDataPresent Done"];
@@ -248,33 +252,6 @@ static IOS_DJI * _sharedInstance;
     UnitySendMessage("IOSDroneBridgeEventListener", "OnFlightControllerPresent", [IOS_DJI_DataConvertor NSStringToChar:@"model / heading/ flight details can try"]);
 #endif
 }
-/*
--(void) CheckDeleagteTaskCompleted:(NSDictionary *)fromFlight withDJIGimbal: (NSDictionary *)fromGimbal {
-    self.fromFlightDelegate = fromFlight;
-    self.fromGimbalDelegate = fromGimbal;
-    
-//     if([self.fromFlightDelegate count] > 0 && [self.fromGimbalDelegate count] > 0){
-     
-//         NSMutableDictionary * dict = [[NSMutableDictionary alloc] init];
-//         [dict addEntriesFromDictionary: self.fromFlightDelegate];
-//         [dict addEntriesFromDictionary: self.fromGimbalDelegate];
-        
-//         /// Parse Dictionary
-//         NSError *err;
-//         NSData  *data = [NSJSONSerialization  dataWithJSONObject:dict options:0 error:&err];
-//         NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        
-#if UNITY_BUILD
-        ///Send GPS State with data
-        const char * parseData = [IOS_DJI_DataConvertor NSStringToChar:[NSString stringWithFormat:@"%@", dataString]];
-        UnitySendMessage("IOSDrone", "DroneData", parseData);
-#else
-        NSLog(@"%@", dataString);
-#endif
-    }
-    
-}
-*/
 
 ///MARK:- Camera Delegate
 -(void) setupVideoStream {
@@ -305,18 +282,36 @@ static IOS_DJI * _sharedInstance;
 
 - (void)setupVideoPreviewer {
     DJIBaseProduct *product = [DJISDKManager product];
-    if ([product.model isEqual:DJIAircraftModelNameA3] ||
-            [product.model isEqual:DJIAircraftModelNameN3] ||
-            [product.model isEqual:DJIAircraftModelNameMatrice600] ||
-            [product.model isEqual:DJIAircraftModelNameMatrice600Pro]){
-            [[DJISDKManager videoFeeder].secondaryVideoFeed addListener:self withQueue:nil];
-            
+    if ([self.modelName1 isEqual:DJIAircraftModelNameA3] ||
+        [self.modelName1 isEqual:DJIAircraftModelNameN3] ||
+        [self.modelName1 isEqual:DJIAircraftModelNameMatrice600] ||
+        [self.modelName1 isEqual:DJIAircraftModelNameMatrice600Pro]){
+        [[DJISDKManager videoFeeder].secondaryVideoFeed addListener:self withQueue:nil];
+        
     }else{
         [[DJISDKManager videoFeeder].primaryVideoFeed addListener:self withQueue:nil];
     }
-    [[DJIVideoPreviewer instance] start];
 }
+
+-(void) attachViewToVideoPreviewer:(UIViewController*) targetViewController {
+    // general view
+?    self.videoPreviewView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+    targetViewController.view.backgroundColor = [UIColor redColor];
+    //    [self.view addSubview:self.videoPreviewView];
+    //    [self.view sendSubviewToBack:self.videoPreviewView];
+//    [self.targetViewController.view addSubview:self.videoPreviewView];
+//    [self.targetViewController.view sendSubviewToBack:self.videoPreviewView];
     
+    // init dji preview
+    [DJIVideoPreviewer instance].type = DJIVideoPreviewerTypeAutoAdapt;
+    [[DJIVideoPreviewer instance] start];
+    [[DJIVideoPreviewer instance] reset];
+//    [[DJIVideoPreviewer instance] setView:self.videoPreviewView];
+    [[DJIVideoPreviewer instance] setView:targetViewController.view];
+    // set enable decode
+    [[DJIVideoPreviewer instance] setEnableHardwareDecode:YES];
+}
+
 - (void)resetVideoPreview {
     [[DJIVideoPreviewer instance] unSetView];
     DJIBaseProduct *product = [DJISDKManager product];
@@ -357,6 +352,7 @@ static IOS_DJI * _sharedInstance;
                 #endif
             }
         }];
+        [self removeContainedController:self.presentedController];
     }
 }
 
@@ -414,6 +410,143 @@ char* cStringCopy(const char* string)
     return res;
 }
 
+#pragma mark Video related work
+
+
+-(void) showDemoView
+{
+    [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"method to show demo view"];
+    // if you displayed as a contained controller and removed it then self.presentedController will be nil
+    if (self.presentedController == nil)
+    {
+        // either load as contained controller or as presented controller
+        // change this to see both ways of displaying your content then remove
+        // when you know what you want to use
+        BOOL loadAsContained = true;
+        
+        // this view controller is defined in a storyboard, get a reference to the containing storyboard
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+        
+        // instantiate the view controller from the storyboard
+        DemoViewController *demo = [storyboard instantiateViewControllerWithIdentifier:@"DemoVC"];
+        
+        if (loadAsContained)
+        {
+            [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"goes for demo controllrt"];
+            // add this view controller as a contained controller (child) of the presented view controller
+            [self addContainedController:demo];
+        }
+        else
+        {
+            [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"not as child but as present view contorller"];
+            // if you don't want to display as a child, and instead want to present the view controller
+            // on top of the currently presented controller then use this method instead of the previous one
+            [[self getTopViewController] presentViewController:demo animated:YES completion:nil];
+        }
+    }
+    else
+    {
+        [self removeContainedController:self.presentedController];
+    }
+    [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"end demo view method"];
+}
+
+#pragma mark Video related work Helper
+// condensed version
+- (UIWindow*) getTopApplicationWindow
+{
+    [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"getTopApplicationWindow"];
+    // grabs the top most window
+    NSArray* windows = [[UIApplication sharedApplication] windows];
+    return ([windows count] > 0) ? windows[0] : nil;
+}
+
+
+- (UIViewController*) getTopViewController
+{
+    [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"getTopViewController"];
+    // get the top most window
+    UIWindow *window = [self getTopApplicationWindow];
+    
+    // get the root view controller for the top most window
+    UIViewController *vc = window.rootViewController;
+    
+    // check if this view controller has any presented view controllers, if so grab the top most one.
+    while (vc.presentedViewController != nil)
+    {
+        // drill to topmost view controller
+        vc = vc.presentedViewController;
+    }
+    
+    return vc;
+}
+
+
+-(void) addContainedController:(UIViewController*)controller
+{
+    [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"addContainedController"];
+    // get a reference to the current presented view controller
+    UIViewController *parent = [self getTopViewController];
+    
+    // notify of containment
+    [controller willMoveToParentViewController:parent];
+    
+    // add content as child
+    [parent addChildViewController:controller];
+    
+    // set frame of child content (for demo inset by 100px padding on all sides)
+    controller.view.frame = CGRectMake(100.0, 100.0, parent.view.bounds.size.width - 200.0, parent.view.bounds.size.height - 200.0);
+    
+    // get fancy, lets animate in
+    controller.view.alpha = 0.0;
+    
+    [self attachViewToVideoPreviewer:controller];
+    
+    // add as subview
+    [parent.view addSubview:controller.view];
+    
+    // animation duration
+    CGFloat duration = 0.3;
+    
+    // animate the alpha in and bring top views to top
+    [UIView animateWithDuration:duration
+                     animations:^
+     {
+         controller.view.alpha = 1.0;
+     }
+                     completion:nil
+     ];
+    
+    // set our tracker variable
+    self.presentedController = controller;
+}
+
+-(void) removeContainedController:(UIViewController*)controller
+{
+    [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"removeContainedController"];
+    // if fade out our view here just because
+    [UIView animateWithDuration:0.3
+                     animations:^
+     {
+         controller.view.alpha = 0;
+     }
+                     completion:^(BOOL finished)
+     {
+         
+         // inform the child it is being removed by passing nil here
+         [controller willMoveToParentViewController:nil];
+         
+         // remove the view
+         [controller.view removeFromSuperview];
+         
+         // remove view controller from container
+         [controller removeFromParentViewController];
+         
+         // nil out tracker
+         self.presentedController = nil;
+     }];
+}
+
 - (NSData *) getDataTexOption1 {
     return self.byteTex;
 }
@@ -433,6 +566,7 @@ extern "C" {
     
     void _DJI_StartVideoStream() {
         [[IOS_DJI sharedInstance] StartVideoCapture];
+        [[IOS_DJI sharedInstance] showDemoView];
     }
     
     void _DJI_StopVideoStream() {
