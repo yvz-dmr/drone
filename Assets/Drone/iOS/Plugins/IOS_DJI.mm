@@ -362,10 +362,10 @@ static IOS_DJI * _sharedInstance;
     [[DJIVideoPreviewer instance] push:(uint8_t *)videoData.bytes length:(int)videoData.length];
     NSString *encodeData = [videoData base64Encoding];
     self.byteTex = videoData;
-    [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"tracking video data"];
-    [[IOS_DJI_NativeUtility sharedInstance] NativeLog: [NSString stringWithFormat:@"byte in form of string : %@",encodeData]];
-    [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"tracking video data"];
-    [[IOS_DJI_NativeUtility sharedInstance] NativeLog: [NSString stringWithFormat:@"byte in form of string : %@",self.byteTex]];
+    // [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"tracking video data"];
+    // [[IOS_DJI_NativeUtility sharedInstance] NativeLog: [NSString stringWithFormat:@"byte in form of string : %@",encodeData]];
+    // [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"tracking video data"];
+    // [[IOS_DJI_NativeUtility sharedInstance] NativeLog: [NSString stringWithFormat:@"byte in form of string : %@",self.byteTex]];
 #if UNITY_BUILD
     UnitySendMessage("IOSDrone", "OnVideoStreamSuccessWithData", [IOS_DJI_DataConvertor NSStringToChar:encodeData]);
 #endif
