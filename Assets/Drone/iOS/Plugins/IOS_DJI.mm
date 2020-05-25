@@ -267,7 +267,7 @@ static IOS_DJI * _sharedInstance;
             [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"Set DJICameraModeRecordVideo Failed"];
 #if UNITY_BUILD
             const char * err = [IOS_DJI_DataConvertor NSStringToChar:[NSString stringWithFormat:@"%@", [error description]]];
-            UnitySendMessage("IOSDrone", "OnVideoStreamFailed", err);
+            // UnitySendMessage("IOSDrone", "OnVideoStreamFailed", err);
 #endif
         }
     }];
@@ -334,7 +334,7 @@ static IOS_DJI * _sharedInstance;
                 [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"Start Record Video Error"];
 #if UNITY_BUILD
                 const char * err = [IOS_DJI_DataConvertor NSStringToChar:[NSString stringWithFormat:@"%@", [error description]]];
-                UnitySendMessage("IOSDrone", "OnVideoStreamFailed", err);
+                // UnitySendMessage("IOSDrone", "OnVideoStreamFailed", err);
 #endif
             }
         }];
@@ -349,7 +349,7 @@ static IOS_DJI * _sharedInstance;
                 [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"Stop Record Video Error"];
 #if UNITY_BUILD
                 const char * err = [IOS_DJI_DataConvertor NSStringToChar:[NSString stringWithFormat:@"%@", [error description]]];
-                UnitySendMessage("IOSDrone", "OnVideoStreamFailed", err);
+                // UnitySendMessage("IOSDrone", "OnVideoStreamFailed", err);
 #endif
             }
         }];
@@ -367,7 +367,7 @@ static IOS_DJI * _sharedInstance;
     // [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"tracking video data"];
     // [[IOS_DJI_NativeUtility sharedInstance] NativeLog: [NSString stringWithFormat:@"byte in form of string : %@",self.byteTex]];
 #if UNITY_BUILD
-    UnitySendMessage("IOSDrone", "OnVideoStreamSuccessWithData", [IOS_DJI_DataConvertor NSStringToChar:encodeData]);
+    // UnitySendMessage("IOSDrone", "OnVideoStreamSuccessWithData", [IOS_DJI_DataConvertor NSStringToChar:encodeData]);
 #endif
 }
 
@@ -423,7 +423,7 @@ char* cStringCopy(const char* string)
         // either load as contained controller or as presented controller
         // change this to see both ways of displaying your content then remove
         // when you know what you want to use
-        BOOL loadAsContained = true;
+        BOOL loadAsContained = false;
         
         // this view controller is defined in a storyboard, get a reference to the containing storyboard
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
