@@ -90,7 +90,7 @@ public class IOSDrone : Drone
     {
         if (videoStreamTexture == null)
             videoStreamTexture = new Texture2D(Screen.width, Screen.height, TextureFormat.RGBA32, false);
-
+        _DJI_StartVideoStream();
         //droneNativeObject.Call("StartStream", videoStreamTexture.GetNativeTexturePtr().ToInt32()/*, 1920, 1088*/);
         return videoStreamTexture;
     }
