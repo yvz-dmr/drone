@@ -190,7 +190,7 @@ static IOS_DJI * _sharedInstance;
         
         NSDictionary *dataDict = @{ @"GetGimbalAttitude": gimbalAttitude };
         [self.GetDroneData addEntriesFromDictionary:dataDict];
-        [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"OnGimbalDataPresent Done"];
+        // [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"OnGimbalDataPresent Done"];
 #if UNITY_BUILD
         UnitySendMessage("IOSDroneBridgeEventListener", "OnGimbalDataPresent", [IOS_DJI_DataConvertor NSStringToChar:@"OnGimbalDataPresent"]);
 #endif
@@ -248,7 +248,7 @@ static IOS_DJI * _sharedInstance;
                                };
     
     [self.GetDroneData addEntriesFromDictionary:dataDict];
-    [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"OnFlightControllerPresent Done"];
+    // [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"OnFlightControllerPresent Done"];
 #if UNITY_BUILD
     UnitySendMessage("IOSDroneBridgeEventListener", "OnFlightControllerPresent", [IOS_DJI_DataConvertor NSStringToChar:@"model / heading/ flight details can try"]);
 #endif
@@ -426,23 +426,24 @@ char* cStringCopy(const char* string)
         BOOL loadAsContained = false;
         
         // this view controller is defined in a storyboard, get a reference to the containing storyboard
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+        // UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
         
         // instantiate the view controller from the storyboard
-        UIViewController *demo = [storyboard instantiateViewControllerWithIdentifier:@"DemoVC"];
-        
+        // UIViewController *demo = [storyboard instantiateViewControllerWithIdentifier:@"DemoVC"];
+        DemoViewController = [[UIViewController alloc] initWithNibName:@"VideoView" bundle:nil];
+    
         if (loadAsContained)
         {
             [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"goes for demo controllrt"];
             // add this view controller as a contained controller (child) of the presented view controller
-            [self addContainedController:demo];
+            [self addContainedController:DemoViewController];
         }
         else
         {
             [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"not as child but as present view contorller"];
             // if you don't want to display as a child, and instead want to present the view controller
             // on top of the currently presented controller then use this method instead of the previous one
-            [[self getTopViewController] presentViewController:demo animated:YES completion:nil];
+            [[self getTopViewController] presentViewController:DemoViewController animated:YES completion:nil];
         }
     }
     else
