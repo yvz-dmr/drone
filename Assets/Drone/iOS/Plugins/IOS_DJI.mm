@@ -430,20 +430,20 @@ char* cStringCopy(const char* string)
         
         // instantiate the view controller from the storyboard
         // UIViewController *demo = [storyboard instantiateViewControllerWithIdentifier:@"DemoVC"];
-        self.demoViewController = [[VideoViewController alloc] initWithNibName:@"VideoViewController" bundle:nil];
-    
+        _demoViewController = [[UIViewController alloc] initWithNibName:@"VideoViewController" bundle:nil];
+        
         if (loadAsContained)
         {
             [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"goes for demo controllrt"];
             // add this view controller as a contained controller (child) of the presented view controller
-            [self addContainedController:self.demoViewController];
+            [self addContainedController:_demoViewController];
         }
         else
         {
             [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"not as child but as present view contorller"];
             // if you don't want to display as a child, and instead want to present the view controller
             // on top of the currently presented controller then use this method instead of the previous one
-            [[self getTopViewController] presentViewController:self.demoViewController animated:YES completion:nil];
+            [[self getTopViewController] presentViewController:_demoViewController animated:YES completion:nil];
         }
     }
     else

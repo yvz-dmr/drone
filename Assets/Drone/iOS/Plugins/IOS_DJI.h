@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 //video related
 @property(nonatomic) UIView* videoPreviewView;
 @property (nonatomic, strong) UIViewController *presentedController;
+@property (nonatomic, strong) UIViewController *demoViewController;
 
 
 @end
