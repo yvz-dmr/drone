@@ -430,7 +430,7 @@ char* cStringCopy(const char* string)
         
         // instantiate the view controller from the storyboard
         // UIViewController *demo = [storyboard instantiateViewControllerWithIdentifier:@"DemoVC"];
-        self.demoViewController = [[UIViewController alloc] initWithNibName:@"VideoView" bundle:nil];
+        self.demoViewController = [[VideoViewController alloc] initWithNibName:@"VideoViewController" bundle:nil];
     
         if (loadAsContained)
         {
