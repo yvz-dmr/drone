@@ -36,7 +36,7 @@ DJIVideoFeedListener, DJICameraDelegate, DJIGimbalDelegate>
 // video related
 @property(nonatomic) UIView* videoPreviewView;
 @property (nonatomic, strong) UIViewController *presentedController;
-@property (nonatomic, strong) UIViewController *DemoViewController;
+@property (nonatomic, strong) UIViewController *demoViewController;
 
 @end
 #endif
@@ -430,20 +430,20 @@ char* cStringCopy(const char* string)
         
         // instantiate the view controller from the storyboard
         // UIViewController *demo = [storyboard instantiateViewControllerWithIdentifier:@"DemoVC"];
-        DemoViewController = [[UIViewController alloc] initWithNibName:@"VideoView" bundle:nil];
+        self.demoViewController = [[UIViewController alloc] initWithNibName:@"VideoView" bundle:nil];
     
         if (loadAsContained)
         {
             [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"goes for demo controllrt"];
             // add this view controller as a contained controller (child) of the presented view controller
-            [self addContainedController:DemoViewController];
+            [self addContainedController:self.demoViewController];
         }
         else
         {
             [[IOS_DJI_NativeUtility sharedInstance] NativeLog: @"not as child but as present view contorller"];
             // if you don't want to display as a child, and instead want to present the view controller
             // on top of the currently presented controller then use this method instead of the previous one
-            [[self getTopViewController] presentViewController:DemoViewController animated:YES completion:nil];
+            [[self getTopViewController] presentViewController:self.demoViewController animated:YES completion:nil];
         }
     }
     else
